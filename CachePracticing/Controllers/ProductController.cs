@@ -1,5 +1,6 @@
 ﻿using CachePracticing.Domain.Dtos;
 using CachePracticing.Domain.Repositories;
+using CachePracticing.Domain.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.Metadata.Ecma335;
 
@@ -17,6 +18,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK ,Type = typeof(ProductViewModel))]
     public async Task<IActionResult> GetProduct([FromRoute] int id, CancellationToken ct = default)
     {
         var res = await _repository.Get(id, ct);
@@ -25,10 +27,12 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<ProductViewModel>))]
     public async Task<IActionResult> GetProducts([FromQuery] int take, int skip, CancellationToken ct = default)
         => Ok(await _repository.GetList(skip, take, ct));
 
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> CreateProduct([FromBody] ProductData data, CancellationToken ct = default) 
     {
         await _repository.Create(data, ct);
@@ -37,6 +41,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> UpdateProduct([FromRoute] int id, [FromBody] string name, string description, decimal price, CancellationToken ct = default)
     {
         await _repository.Update(id, name, description, price, ct);
@@ -45,6 +50,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeleteProduct([FromRoute] int id, CancellationToken ct = default)
     {
         await _repository.Delete(id, ct);
