@@ -15,7 +15,13 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.AddMaps(Assembly.GetExecutingAssembly());
 });
 
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductRepository, CachedProductRepository>();
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = "localhost:6379";
+    options.InstanceName = "products:";
+});
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
