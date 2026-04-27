@@ -28,7 +28,7 @@ public class ProductController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<ProductViewModel>))]
-    public async Task<IActionResult> GetProducts([FromQuery] int take, int skip, CancellationToken ct = default)
+    public async Task<IActionResult> GetProducts([FromQuery] int skip, int take, CancellationToken ct = default)
         => Ok(await _repository.GetList(skip, take, ct));
 
     [HttpPost]
