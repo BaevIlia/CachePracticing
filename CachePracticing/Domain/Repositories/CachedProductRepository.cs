@@ -44,6 +44,8 @@ public class CachedProductRepository : IProductRepository
 
         _dbContext.Products.Remove(product);
 
+        await _cache.RemoveAsync($"product:{id}");
+
         await _dbContext.SaveChangesAsync(ct);
     }
 
@@ -56,7 +58,9 @@ public class CachedProductRepository : IProductRepository
 
         var productFromDb = await _dbContext.Products.FirstOrDefaultAsync(x => x.Id == id, ct);
 
-        await _cache.SetStringAsync($"product:{id}", JsonConvert.SerializeObject(productFromDb));
+        await _cache.SetStringAsync($"product:{id}",
+            JsonConvert.SerializeObject(productFromDb),
+            new DistributedCacheEntryOptions {AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1) });
 
         return _mappper.Map<ProductViewModel>(productFromDb);
     }
@@ -76,6 +80,8 @@ public class CachedProductRepository : IProductRepository
         product.Description = description;
         product.Price = price;
         product.UpdatedAt = DateTime.Now;
+
+        await _cache.RemoveAsync($"product:{id}");
 
         await _dbContext.SaveChangesAsync(ct);
     }

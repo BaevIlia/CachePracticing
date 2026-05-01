@@ -42,9 +42,9 @@ public class ProductController : ControllerBase
 
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> UpdateProduct([FromRoute] int id, [FromBody] string name, string description, decimal price, CancellationToken ct = default)
+    public async Task<IActionResult> UpdateProduct([FromRoute] int id, [FromBody] ProductUpdateData data, CancellationToken ct = default)
     {
-        await _repository.Update(id, name, description, price, ct);
+        await _repository.Update(id, data.Name, data.Description, data.Price, ct);
 
         return NoContent();
     }
